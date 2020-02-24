@@ -1,10 +1,3 @@
-# uncompyle6 version 3.3.4
-# Python bytecode 3.5 (3350)
-# Decompiled from: Python 3.5.1 (default, Dec  5 2017, 16:33:41) 
-# [GCC 4.8.5 20150623 (Red Hat 4.8.5-16)]
-# Embedded file name: /data/sunnycia/hdr_works/source_code/hdr_saliency/training_keras/config.py
-# Compiled at: 2019-06-16 14:17:25
-# Size of source mod 2**32: 3340 bytes
 import glob, os, time, datetime as dt, shutil
 from loss import saliency_loss
 from tensorflow.keras import optimizers
@@ -12,12 +5,12 @@ import tensorflow.keras.backend as K
 # import model_defination
 from loss import kl_divergence, correlation_coefficient, bhattacharyya_distance
 
+# training configuration
 debug_flag = False
 loss_type = 'mae'
 Finetune = False
 learn_rate = 0.001
 optimizer_type = 'sgd'
-model_version = '0.1_dense'
 restart = False
 training_dataset_name = 'salicon'
 test_dataset_name = 'hdreye'
@@ -32,37 +25,36 @@ HEIGHT = 224
 stream = 1 
 batch_size = 20
 
-if debug_flag:
-    train_set_image_dir = 'dataset/salicon-2014-subset/train/images/1/'
-    train_set_density_dir = 'dataset/salicon-2014-subset/train/density/1/'
+
+#test configuration
+model_version = '0.1_dense_cam'
+split_version = 'sliding'
+sampling_mode = '5'
+fusion_type = 'uw'; ## average, max_out, minkowskii fusion, UW fusion
+
+
+
+if training_dataset_name == 'salicon':
+    # raise NotImplementedError
+    train_set_image_dir = 'dataset/salicon-2014/train/images/'
+    train_set_density_dir = 'dataset/salicon-2014/train/density/'
+    validation_set_image_dir = 'dataset/salicon-2014/val/images/'
+    validation_set_density_dir = 'dataset/salicon-2014/val/density/'
+elif training_dataset_name == 'cat2000':
+    train_set_image_dir = 'dataset/cat2000/images/'
+    train_set_density_dir = 'dataset/cat2000/density/'
     validation_set_image_dir = 'dataset/salicon-2014-subset/val/images/1/'
     validation_set_density_dir = 'dataset/salicon-2014-subset/val/density/1/'
-else:
-    if training_dataset_name == 'salicon':
-        # raise NotImplementedError
-        train_set_image_dir = 'dataset/salicon-2014/train/images/'
-        train_set_density_dir = 'dataset/salicon-2014/train/density/'
-        validation_set_image_dir = 'dataset/salicon-2014/val/images/'
-        validation_set_density_dir = 'dataset/salicon-2014/val/density/'
-    elif training_dataset_name == 'cat2000':
-        train_set_image_dir = 'dataset/cat2000/images/'
-        train_set_density_dir = 'dataset/cat2000/density/'
-        validation_set_image_dir = 'dataset/salicon-2014-subset/val/images/1/'
-        validation_set_density_dir = 'dataset/salicon-2014-subset/val/density/1/'
-    elif training_dataset_name == 'hollywood':
-        train_set_image_dir = '/data/SaliencyDataset/Video/ActionInTheEye/Hollywood2/allinone/frames/'
-        train_set_density_dir = '/data/SaliencyDataset/Video/ActionInTheEye/Hollywood2/allinone/density/'
-        validation_set_image_dir = 'dataset/salicon-2014-subset/val/images/1/'
-        validation_set_density_dir = 'dataset/salicon-2014-subset/val/density/1/'
-    elif training_dataset_name == 'ledov':
-        train_set_image_dir = '/data/SaliencyDataset/Video/LEDOV/allinone/subset/frames/'
-        train_set_density_dir = '/data/SaliencyDataset/Video/LEDOV/allinone/subset/density/'
-        validation_set_image_dir = 'dataset/salicon-2014-subset/val/images/1/'
-        validation_set_density_dir = 'dataset/salicon-2014-subset/val/density/1/'
-    # train_set_image_dir = 'dataset/mit1003/images/'
-    # train_set_density_dir = 'dataset/mit1003/density/'
-    # validation_set_image_dir = 'dataset/salicon-2014-subset/val/images/1/'
-    # validation_set_density_dir = 'dataset/salicon-2014-subset/val/density/1/'
+elif training_dataset_name == 'hollywood':
+    train_set_image_dir = '/data/SaliencyDataset/Video/ActionInTheEye/Hollywood2/allinone/frames/'
+    train_set_density_dir = '/data/SaliencyDataset/Video/ActionInTheEye/Hollywood2/allinone/density/'
+    validation_set_image_dir = 'dataset/salicon-2014-subset/val/images/1/'
+    validation_set_density_dir = 'dataset/salicon-2014-subset/val/density/1/'
+elif training_dataset_name == 'ledov':
+    train_set_image_dir = '/data/SaliencyDataset/Video/LEDOV/allinone/subset/frames/'
+    train_set_density_dir = '/data/SaliencyDataset/Video/LEDOV/allinone/subset/density/'
+    validation_set_image_dir = 'dataset/salicon-2014-subset/val/images/1/'
+    validation_set_density_dir = 'dataset/salicon-2014-subset/val/density/1/'
 
 steps_per_epoch = len(glob.glob(os.path.join(train_set_image_dir, '*.*'))) // batch_size
 validation_step = len(glob.glob(os.path.join(validation_set_image_dir, '*.*'))) // batch_size
@@ -133,9 +125,9 @@ else:
     raise NotImplementedError
 
 model_txt = 'model_list.txt'
-save_base = 'output/'
+save_base = 'model/'
 if debug_flag:
-    save_base='output/debug/'
+    save_base='model/debug/'
 metric_base = 'metric'
 model_name = 'srsn_saliency.h5'
 checkpoint_name = 'checkpoint.h5'
@@ -145,4 +137,3 @@ metric_debug = 0
 statistics_flag = 1
 output_latex = True
 latex_file = 'metric.txt'
-# okay decompiling __pycache__/config.cpython-35.pyc
